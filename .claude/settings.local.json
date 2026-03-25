@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(echo cleaned:*)",
+      "Bash(echo Port cleared:*)",
+      "Bash(xargs kill -9)",
+      "Bash(lsof -ti:3001)",
+      "Bash(npm run:*)",
+      "Bash(echo ports cleared:*)",
+      "Bash(curl:*)",
+      "WebSearch",
+      "Bash(npm uninstall:*)",
+      "Bash(true:*)",
+      "WebFetch(domain:loops.so)",
+      "WebFetch(domain:app.loops.so)",
+      "Bash(echo cleared:*)",
+      "Bash(lsof -ti:3001,5173)",
+      "Bash(node -e \":*)",
+      "Bash(node:*)"
+    ]
+  }
+}
