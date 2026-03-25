@@ -1,6 +1,8 @@
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 
 const templatesRouter = require('./routes/templates');
 const sendTestEmailRouter = require('./routes/sendTestEmail');
@@ -20,10 +22,20 @@ app.get('/api/health', (req, res) => {
 app.use('/api/templates', templatesRouter);
 app.use('/api/send-test-email', sendTestEmailRouter);
 
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: `Route not found: ${req.method} ${req.path}` });
-});
+// Serve built React frontend if dist exists
+const distPath = path.join(__dirname, '../client/dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  // Catch-all: let React Router handle non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+} else {
+  // 404 handler for API-only dev mode
+  app.use((req, res) => {
+    res.status(404).json({ error: `Route not found: ${req.method} ${req.path}` });
+  });
+}
 
 // Global error handler
 app.use((err, req, res, next) => {
