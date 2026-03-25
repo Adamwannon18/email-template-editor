@@ -22,20 +22,22 @@ app.get('/api/health', (req, res) => {
 app.use('/api/templates', templatesRouter);
 app.use('/api/send-test-email', sendTestEmailRouter);
 
-// Serve built React frontend if dist exists
-const distPath = path.join(__dirname, '../client/dist');
-if (fs.existsSync(distPath)) {
-  app.use(express.static(distPath));
-  // Catch-all: let React Router handle non-API routes
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
-  });
-} else {
-  // 404 handler for API-only dev mode
-  app.use((req, res) => {
-    res.status(404).json({ error: `Route not found: ${req.method} ${req.path}` });
-  });
-}
+// Serve built React frontend
+const distPath = path.resolve(__dirname, '../client/dist');
+const indexHtml = path.join(distPath, 'index.html');
+console.log(`Static files path: ${distPath}`);
+console.log(`index.html exists: ${fs.existsSync(indexHtml)}`);
+
+app.use(express.static(distPath));
+
+// Catch-all: let React Router handle non-API routes
+app.get('*', (req, res) => {
+  if (fs.existsSync(indexHtml)) {
+    res.sendFile(indexHtml);
+  } else {
+    res.status(404).json({ error: 'Frontend not built. Run npm run build.' });
+  }
+});
 
 // Global error handler
 app.use((err, req, res, next) => {
